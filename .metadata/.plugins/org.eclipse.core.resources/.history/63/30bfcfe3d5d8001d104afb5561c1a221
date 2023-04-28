@@ -1,0 +1,12 @@
+<%@page import="my.user.inquiry.inquiryDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	String iid = request.getParameter("iid");
+	String subject = request.getParameter("subject");
+	String content = request.getParameter("content");
+	int passwd = Integer.parseInt(request.getParameter("passwd"));
+	
+	inquiryDao idao = inquiryDao.getInstance();
+	int cnt = idao.insertInquiry(iid,subject,content,passwd); 
+%>

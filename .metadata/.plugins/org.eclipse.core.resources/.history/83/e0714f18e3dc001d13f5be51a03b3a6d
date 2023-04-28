@@ -1,0 +1,221 @@
+<%@page import="java.text.DecimalFormat"%>
+<%@page import="java.util.Calendar"%>
+<%@page import="my.manager.movie.MovieBean"%>
+<%@page import="my.manager.movie.MovieDao"%>
+<%@page import="my.user.ticket.ticketBean"%>
+<%@page import="my.user.ticket.ticketDao"%>
+<%@page import="java.util.ArrayList"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<title>예매 확인 페이지</title>
+
+<style type="text/css">
+	.ttable{
+		text-align: center;
+		font-family: 'Nanum Pen Script', cursive;
+		font-size: 20px;
+	}
+	.ttable td h5{
+		font-family: 'Nanum Pen Script', cursive;
+	}
+	.ttable td a{
+		color : #FAED7D;
+		font-size: 30px;
+	}
+	.ttable td a:hover{
+		color : #6799FF;
+	}
+	.ttable td .delete{
+		color : grey;
+		text-decoration: underline;
+		font-size: 15px;
+	}
+	.ttable td .delete:hover{
+		color : #CC3D3D;
+	}
+</style>
+
+<script type="text/javascript">
+	function delete_check(){
+		var delete_check = confirm('예매 취소 하시겠습니까?');
+		
+		if(!delete_check){
+			return false;
+		}
+	}
+</script>
+
+<%@ include file="../home_top.jsp"%>
+<%
+	request.setCharacterEncoding("UTF-8");
+	ticketDao tdao = ticketDao.getInstance();
+	ArrayList<ticketBean> tlist = tdao.getTicketById(sid); 
+	MovieDao mdao = MovieDao.getInstance();
+	int age = 0;
+	if(tlist.size() != 0){
+		String sbirth = String.valueOf(tlist.get(0).getBirth());
+		String subbirth = sbirth.substring(0, 2);
+		
+		String birth_year = "";
+		if(Integer.parseInt(subbirth) < 24 && Integer.parseInt(subbirth) >= 0 ){
+			birth_year += "20" + subbirth;
+		}
+		else{
+			birth_year += "19" + subbirth;
+		}
+		Calendar cal = Calendar.getInstance();
+		age = cal.get(Calendar.YEAR) - Integer.parseInt(birth_year) + 1;
+	}
+	
+	DecimalFormat df = new DecimalFormat("###,###");
+	
+%>
+<tr>
+		<td align="center" colspan="1" style="color : white" height="20">
+    		 <ul class="nav nav-pills nav-justified"> 
+		         <li class="dropdown">
+		         	  <a href="<%= request.getContextPath() %>/MY/Home/home_movie_list.jsp" id="m1">영화</a>
+		         </li>
+		         
+		         <li class="dropdown">
+		         	  <a href="<%= request.getContextPath() %>/MY/Home/home_cinema_list.jsp" id="m1">극장</a>
+		         </li>
+		         
+		         <li class="dropdown">
+		         <%
+		         	if(sid == null){
+		         %>
+		         	  <a data-toggle="dropdown" href="" id="m1" onclick="ticket_idCheck()">예매
+		         	  	 <span class="caret"></span> 	 
+		         	  </a>
+		         <%
+		         	}
+		         	else if(sid.equals("manager")){
+		         %>
+		         	<a data-toggle="dropdown" href="" id="m1" onclick="id_managerCheck()">예매
+		         	  	 <span class="caret"></span> 	 
+		         	</a>
+		         <%		
+		         	}
+		         	else{
+		         %>	 	  	  
+		        	  <a data-toggle="dropdown" href="#" id="m1" style="color : #FF7171;">예매
+		         	  	 <span class="caret"></span> 	 
+		         	  </a>
+		         	   <ul class="dropdown-menu" role="menu" id="mm1"> 
+			               <li><a role="menuitem" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_movie.jsp">영화별 예매</a></li>
+			               <li><a role="menuitem" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_cinema.jsp">극장별 예매</a></li>
+			                <li class="divider" style="border : 0.1px solid #4B4B4B;"></li>
+			               <li><a role="menuitem" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_list.jsp">예매 확인 </a></li>
+			          </ul>
+			     <%
+		         	}
+			     %>     
+		         </li>
+		          <li class="dropdown">
+		         	  <a class="f2" href="<%= request.getContextPath() %>/MY/Home/home_snack_list.jsp" id="m1">스낵</a>
+		         </li>
+		     </ul>
+		     </nav>
+		</td>
+	</tr>
+	
+	<tr>
+		<td colspan="5" height="10">
+			<hr>
+		</td>
+	</tr>
+	
+	<tr>
+<td colspan="5" align="center" width="500">
+
+	<table class="ttable" border="0" width="500">
+	<%
+		if(tlist.size() == 0){
+	%>
+			<tr>
+				<td colspan="3">등록된 영화가 없습니다.</td>
+			</tr>
+	<%		
+		}
+		else{
+	%>
+		<tr>
+			<td colspan="3">
+				<font size="25" color="#FAED7D">예매 내역 <br></font>
+				<%= tlist.get(0).getUname() %> (<%= tlist.get(0).getTid() %>)님 - 
+				<%= age %>세 
+				<hr>
+			</td>
+		</tr>
+	<%		
+		for(ticketBean tb : tlist){
+	%>
+			<tr>
+				<td>
+			<%
+				if(tb.getPoster().equals("영화 포스터 없음")){
+			%>		
+					<font size="50px" color="#F15F5F">포스터<br>준비중</font>
+						<br><br>
+			<%
+				}
+				else{
+			%>
+					<a href="<%= request.getContextPath() %>/MY/Home/home_movie_detail.jsp?mno=<%= tb.getMno() %>"><img src="<%= request.getContextPath() %>/poster/<%= tb.getPoster() %>" width="180"></a>	
+			<%
+				}
+			%>
+				</td>
+				
+				<td width="5">
+				</td>
+				<td align="left" valign="top">
+					<br><br>
+				<%
+				 	if(tb.getMage() == 18){
+				%>			
+					  	<a href="<%= request.getContextPath() %>/MY/Home/home_movie_detail.jsp?mno=<%= tb.getMno() %>"><img src="<%= request.getContextPath() %>/images/18.jpg" width="20"> <%= tb.getTmovie() %></a>
+			   <%
+		     		}
+					else if(tb.getMage() == 15){
+			    %>			
+			     		<a href="<%= request.getContextPath() %>/MY/Home/home_movie_detail.jsp?mno=<%= tb.getMno() %>"><img src="<%= request.getContextPath() %>/images/15.jpg" width="20"> <%= tb.getTmovie() %></a>
+			   	<%
+					     		}
+		    		else if(tb.getMage() == 12){
+			  	%>
+						<a href="<%= request.getContextPath() %>/MY/Home/home_movie_detail.jsp?mno=<%= tb.getMno() %>"><img src="<%= request.getContextPath() %>/images/12.jpg" width="20"> <%= tb.getTmovie() %></a>
+				<%			
+					}
+		     		else{		
+				%>
+						<a href="<%= request.getContextPath() %>/MY/Home/home_movie_detail.jsp?mno=<%= tb.getMno() %>"><img src="<%= request.getContextPath() %>/images/0.jpg" width="20"> <%= tb.getTmovie() %></a>
+				<%	
+					}
+			 	%> 
+			 		<br>
+					<%= tb.getTime() %><br>
+					<%= tb.getTcinema() %> / <%= tb.getSeat_pos() %><br><br>
+					<h5>
+				<%
+					int price = 13000 * tb.getAdult() + 10000 * tb.getChild();
+				%>	
+					티켓 가격 : <%= df.format(price) %>원 (성인 : <%= tb.getAdult() %>명, 어린이 : <%= tb.getChild() %>명)<br>
+					결제 방법 : <%= tb.getPay() %> <br>
+					</h5>
+					<a class="delete" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_delete.jsp?tno=<%= tb.getTno() %>" onclick="return delete_check()">예매 취소</a>
+				</td>
+			</tr>
+			<tr><td height="10"></td></tr>
+		<%
+				
+				}
+			}
+		%>		
+			
+		</table>
+	<br>
+<%@ include file="../home_bottom.jsp"%>
+
+								

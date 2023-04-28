@@ -1,0 +1,35 @@
+<%@page import="my.user.inquiry.inquiryDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+      
+<%
+	request.setCharacterEncoding("UTF-8");
+	String pageNum = request.getParameter("pageNum");
+	inquiryDao idao = inquiryDao.getInstance();
+%>
+
+<jsp:useBean id="bb" class="my.user.inquiry.inquiryBean"/>
+<jsp:setProperty property="*" name="bb"/>
+
+<%	
+
+	bb.setReg_date(new Timestamp(System.currentTimeMillis()));	 
+	bb.setIp(request.getRemoteAddr());
+
+	String msg = null;
+	String url = null;
+	int cnt = bdao.replyArticle(bb); //(5+3)+2 -> 10가지 
+	if(cnt > 0){
+		msg = "작성 성공"; 
+		url = "select.jsp?pageNum=" + pageNum;
+	}
+	else{
+		msg = "작성 실패";
+		url = "replyForm.jsp?ref=" +  bb.getRef() + "&re_step=" + bb.getRe_step() + "&re_level=" + bb.getRe_level() + "&pageNum=" + pageNum;
+	}
+%>
+
+<script type="text/javascript">
+	alert("<%= msg %> "); 
+	location.href= '<%= url %>'; 
+</script>

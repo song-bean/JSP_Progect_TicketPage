@@ -1,0 +1,11 @@
+package my.manager.snack;
+
+public class SnackBean {
+	private int sno;
+	private String sname;
+	private String simage;
+	private int sprice;
+	private int scomp;
+	
+	
+}

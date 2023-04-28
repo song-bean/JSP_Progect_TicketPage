@@ -1,0 +1,33 @@
+<%@page import="my.user.inquiry.inquiryDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<%
+	request.setCharacterEncoding("UTF-8");
+	String ino = request.getParameter("ino");
+	int pageNum = Integer.parseInt(request.getParameter("pageNum"));
+	
+	inquiryDao idao = inquiryDao.getInstance();
+	int cnt = idao.deleteInquiry(ino);
+	
+	String message = null;
+	String url = null;
+	if(cnt == 1){ 
+		message = "삭제 성공"; 
+		
+		int pageSize = 5;
+		int count =idao.getArticleCount();
+		int pageCount = count / pageSize + (count%pageSize == 0 ? 0 : 1);
+		
+		if(pageNum > pageCount){
+			url = "select.jsp?pageNum" + (pageNum - 1);
+		}
+		else{
+			url = "select.jsp?pageNum" + pageNum;
+		}
+	}
+	else{
+		msg = "비밀번호가 맞지 않습니다.";
+		url = "deleteForm.jsp?num=" + num + "&pageNum=" + pageNum;
+	}
+%>    

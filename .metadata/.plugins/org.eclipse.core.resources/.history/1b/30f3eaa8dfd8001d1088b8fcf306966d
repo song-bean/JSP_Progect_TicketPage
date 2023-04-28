@@ -1,0 +1,31 @@
+<%@page import="java.sql.Timestamp"%>
+<%@page import="my.user.inquiry.inquiryDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	request.setCharacterEncoding("UTF-8");
+%>
+<jsp:useBean id="ib" class="my.user.inquiry.inquiryBean"/>
+<jsp:setProperty property="*" name="ib"/>
+<%	
+	Timestamp reg_date = new Timestamp(System.currentTimeMillis());
+	
+	inquiryDao idao = inquiryDao.getInstance();
+	int cnt = idao.updateInquiry(ib);  
+	
+	String message = null;
+	String url = null;
+	if(cnt > 0){
+		message = "수정되었습니다."; 
+		url = "inquiry.jsp";
+	}
+	else{
+		message = "수정 실패하였습니다.";
+		url = "inquiry_update.jsp";
+	}
+%>
+
+<script type="text/javascript">
+	alert("<%= message %> "); 
+	location.href= '<%= url %>'; 
+</script>

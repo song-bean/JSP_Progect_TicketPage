@@ -1,0 +1,27 @@
+<%@page import="java.sql.Timestamp"%>
+<%@page import="my.user.inquiry.inquiryDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	String iid = request.getParameter("iid");
+	String subject = request.getParameter("subject");
+	String content = request.getParameter("content");
+	int passwd = Integer.parseInt(request.getParameter("passwd"));
+	
+	Timestamp reg_date = new Timestamp(System.currentTimeMillis());
+	
+	inquiryDao idao = inquiryDao.getInstance();
+	int cnt = idao.insertInquiry(iid,subject,content,passwd,reg_date);  
+	
+	String message = null;
+	String url = null;
+	int cnt = bdao.insertArticle(bb);   
+	if(cnt > 0){
+		msg = "작성 성공"; 
+		url = "select.jsp";
+	}
+	else{
+		msg = "작성 실패";
+		url = "writeForm.jsp";
+	}
+%>

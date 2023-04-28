@@ -1,0 +1,226 @@
+<%@page import="my.user.userBean"%>
+<%@page import="my.user.userDao"%>
+<%@page import="my.user.inquiry.inquiryBean"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="my.user.inquiry.inquiryDao"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<title>고객 문의</title>
+<style type="text/css">
+	.itable{
+		text-align: center;
+		font-family: 'Nanum Pen Script', cursive;
+		font-size: 18px;
+		border-bottom : 0.1px solid #878787;
+		width: 700px;
+	}
+	.itable td a{
+		color : #D4F4FA;
+	}
+	.itable td a:hover{
+		color : #4374D9;
+	}
+	.wtable{
+		text-align : right;
+		font-family: 'Nanum Pen Script', cursive;
+		font-size: 20px;
+	}
+	.wtable input[type='button']{
+		background-color: #D4F4FA;
+		color : black;
+		border : 0.1px solid #353535;
+		border-radius: 5px;
+	}
+	.wtable input[type='button']:hover{
+		background-color: #4374D9;;
+	}
+	#page{
+		color : #D4F4FA;
+	}
+	#page:hover{
+		color : #4374D9;
+	}
+</style>
+<%@ include file="../Home/home_top.jsp"%>
+<%         
+	application.setAttribute("readCount_check", true);
+	
+	int pageSize = 10;
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	
+	String pageNum = request.getParameter("pageNum");
+	if(pageNum == null){
+		pageNum = "1";
+	}
+	int currentPage = Integer.parseInt(pageNum);
+	int startRow = (currentPage-1) * pageSize + 1;
+	int endRow = currentPage * pageSize;
+	
+	inquiryDao idao = inquiryDao.getInstance();
+	ArrayList<inquiryBean> ilist = null;
+	int count = idao.getArticleCount(); 
+	if(count > 0) {
+		ilist = idao.getArticles(startRow,endRow); 
+	}
+	int number = count-(currentPage-1) * pageSize;
+	
+	userDao udao = userDao.getInstance();
+%> 
+	<tr>
+		<td align="center" colspan="1" style="color : white">
+    		 <ul class="nav nav-pills nav-justified"> 
+		         <li class="dropdown">
+		         	  <a href="<%= request.getContextPath() %>/MY/Home/home_movie_list.jsp" id="m1">영화</a>
+		         </li>
+		         
+		         <li class="dropdown">
+		         	  <a href="<%= request.getContextPath() %>/MY/Home/home_cinema_list.jsp" id="m1">극장</a>
+		         </li>
+		         
+		         <li class="dropdown">
+		         	 <%
+		         	if(sid == null){
+		         %>
+		         	  <a data-toggle="dropdown" href="" id="m1" onclick="ticket_idCheck()">예매
+		         	  	 <span class="caret"></span> 	 
+		         	  </a>
+		        <%
+		         	}
+		         	else if(sid.equals("manager")){
+		         %>
+		         	<a data-toggle="dropdown" href="" id="m1" onclick="id_managerCheck()">예매
+		         	  	 <span class="caret"></span> 	 
+		         	</a>
+		         <%		
+		         	}
+		         	else{
+		         %>	 	  	  
+		        	  <a data-toggle="dropdown" href="#" id="m1">예매
+		         	  	 <span class="caret"></span> 	 
+		         	  </a>
+		         	   <ul class="dropdown-menu" role="menu" id="mm1"> 
+			               <li><a role="menuitem" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_movie.jsp">영화별 예매</a></li>
+			               <li><a role="menuitem" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_cinema.jsp">극장별 예매</a></li>
+			               <li class="divider" style="border : 0.1px solid #4B4B4B;"></li>
+			               <li><a role="menuitem" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_list.jsp">예매 확인 </a></li>
+			          </ul>
+			     <%
+		         	}
+			     %>     
+		         </li>
+		          <li class="dropdown">
+		         	  <a data-toggle="dropdown" class="f2" href="#"id="m1">스낵</a>
+		         </li>
+		     </ul>
+		     <br>
+		</td>
+	</tr>
+	
+<tr>
+<td colspan="5" align="center" style="font-family: 'Nanum Pen Script', cursive;font-size: 20px;">
+	<b>문의 목록</b>
+	<br><br>
+<table border="0" class="itable">
+<%
+	if(count == 0){
+%>
+			<tr>
+				<td align="center" style="border-top : 0.1px solid #878787">
+					게시판에 저장된 글이 없습니다.
+				</td>
+			</tr>
+<%		
+	}else{
+%>
+			<tr height="30" align="center" style="border-top : 0.1px solid #878787;border-bottom : 0.1px solid #878787;background-color: #878787;">
+				<td>번호</td>
+				<td>제목</td>
+				<td>작성자</td>
+				<td>작성일</td>
+				<td>조회</td>
+			</tr>
+			<%for(inquiryBean ib : ilist){ 
+				userBean ub = udao.getMybyId(ib.getIid());	
+			%>
+				<tr height="30" align="center" >
+					<td><%= number-- %></td> 
+					<td align="left" width="340">
+						<%
+							int wid = 20;
+							if(ib.getRe_level() > 0){ 
+								wid = 20 * ib.getRe_level(); 
+						%>
+								<img src="<%= request.getContextPath() %>/icon/level.png" width="<%= wid %>" height="15">
+								<img src="<%= request.getContextPath() %>/icon/re.png" height="20">
+						<%		
+							}
+						%>
+						<a href="inquiry_detail.jsp?ino=<%= ib.getIno() %>&pageNum=<%= pageNum %>"><%= ib.getSubject() %></a>
+						<%
+							if(ib.getReadcount() >= 30){
+								
+						%>
+								<img src="<%= request.getContextPath() %>/icon/hot.png" height="20">
+						<%		
+							}
+						%>
+					</td>
+					<td><%= ub.getUname() %></td>
+					<td><%= sdf.format(ib.getReg_date()) %></td>
+					<td><%= ib.getReadcount() %></td>
+				</tr>
+			<%}//for %>
+</table>
+<% 
+	}//else
+		
+	// 페이지 설정
+	if(count > 0){
+		int pageCount = count / pageSize + (count%pageSize == 0 ? 0 : 1);
+		
+		int pageBlock = 3; //한번에 보이는 페이지 수 (1,2,3 다음)
+		
+		//시작 페이지 : 1 4 7 10 ~
+		int startPage = ((currentPage - 1) / pageBlock * pageBlock) + 1;
+		int endPage = startPage + pageBlock - 1;
+		
+		if(pageCount < endPage){
+			endPage = pageCount;
+		}
+		
+		if(startPage > 3){
+	%>
+			<a id="page" href="inquiry.jsp?pageNum=<%= startPage-1 %>">[이전]</a>
+	<% 		
+		}//if
+		
+		for(int i=startPage;i<=endPage;i++){
+			if(Integer.parseInt(pageNum) == i){
+		%>
+				<a id="page" href="inquiry.jsp?pageNum=<%= i %>"><font>[<%= i %>]</font></a>
+		<%
+			}
+		%>
+			<a id="page" href="inquiry.jsp?pageNum=<%= i %>">[<%= i %>]</a>
+		<%	
+		}//for
+		
+		if(endPage < pageCount){
+		%>
+			<a id="page" href="inquiry.jsp?pageNum=<%= startPage+3 %>">[다음]</a>
+		<%	
+		}//if
+		
+	}//if
+%>
+<table class="wtable" width="700">
+	<tr>
+		<td>
+			<input type="button" value="문의 작성" onclick="location.href='<%= request.getContextPath() %>/MY/Inquiry/inquiry_write.jsp'">
+		</td>
+	</tr>
+</table>
+</td>
+<%@ include file="../Home/home_bottom.jsp"%>
+

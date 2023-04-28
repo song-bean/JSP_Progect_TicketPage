@@ -1,0 +1,191 @@
+<%@page import="my.manager.movie.MovieBean"%>
+<%@page import="my.manager.movie.MovieDao"%>
+<%@page import="my.manager.cinema.CinemaBean"%>
+<%@page import="my.manager.cinema.CinemaDao"%>
+<%@page import="java.util.ArrayList"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<title>극장별 예매 페이지</title>
+
+<%
+	request.setCharacterEncoding("UTF-8");
+	String tmovie = request.getParameter("tmovie");
+	String tcinema = request.getParameter("tcinema");
+	
+	MovieDao mdao = MovieDao.getInstance();
+	ArrayList<MovieBean> mlist =  mdao.getAllMovie();
+	CinemaDao cdao = CinemaDao.getInstance();
+	ArrayList<CinemaBean> clist = cdao.getAllCinema();
+	
+	String[] time = {"09:20 ~ 11:40" ,"11:40 ~ 14:00" ,"14:00 ~ 16:20", "16:20 ~ 18:40", "18:40 ~ 21:00"}; 
+%>
+
+<style type="text/css">
+	.ttable{
+		text-align: center;
+		font-family: 'Nanum Pen Script', cursive;
+		font-size: 20px;
+	}
+	#tm1{
+		color : pink;
+	}
+	#tm1:hover, #tm2:hover, #tm3:hover{
+		background-color : #353535;
+		border-bottom : 1px dotted #A6A6A6;
+	}
+	#tm2{
+		color : #F2CB61;
+	}
+	#tm3{
+		color : #86E57F;
+	}
+</style>
+
+<%@ include file="../home_top.jsp"%>
+<tr>
+		<td align="center" colspan="1" style="color : white" height="20">
+    		 <ul class="nav nav-pills nav-justified"> 
+		         <li class="dropdown">
+		         	  <a href="<%= request.getContextPath() %>/MY/Home/home_movie_list.jsp" id="m1">영화</a>
+		         </li>
+		         
+		         <li class="dropdown">
+		         	  <a href="<%= request.getContextPath() %>/MY/Home/home_cinema_list.jsp" id="m1">극장</a>
+		         </li>
+		         
+		         <li class="dropdown">
+		         	 <%
+		         	if(sid == null){
+		         %>
+		         	  <a data-toggle="dropdown" href="" id="m1" onclick="ticket_idCheck()">예매
+		         	  	 <span class="caret"></span> 	 
+		         	  </a>
+		        <%
+		         	}
+		         	else if(sid.equals("manager")){
+		         %>
+		         	<a data-toggle="dropdown" href="" id="m1" onclick="id_managerCheck()">예매
+		         	  	 <span class="caret"></span> 	 
+		         	</a>
+		         <%		
+		         	}
+		         	else{
+		         %>	 	  	  
+		        	  <a data-toggle="dropdown" href="#" id="m1" style="color : #FF7171;">예매
+		         	  	 <span class="caret"></span> 	 
+		         	  </a>
+		         	   <ul class="dropdown-menu" role="menu" id="mm1"> 
+			               <li><a role="menuitem" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_movie.jsp">영화별 예매</a></li>
+			               <li><a role="menuitem" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_cinema.jsp">극장별 예매</a></li>
+			               <li class="divider" style="border : 0.1px solid #4B4B4B;"></li>
+			               <li><a role="menuitem" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_list.jsp">예매 확인 </a></li>
+			          </ul>
+			     <%
+		         	}
+			     %>     
+		         </li>
+		          <li class="dropdown">
+		         	  <a class="f2" href="<%= request.getContextPath() %>/MY/Home/home_snack_list.jsp" id="m1">스낵</a>
+		         </li>
+		     </ul>
+		</td>
+	</tr>
+	
+	<tr>
+		<td colspan="5" height="10">
+			<hr>
+		</td>
+	</tr>
+	
+	<tr>
+<td colspan="5" align="center">
+	<br>
+		<table border="0" class="ttable" width="50%">
+			<tr>
+				<td style="border-left : 1px solid #5D5D5D;border-right : 1px solid #5D5D5D;">극장 선택</td>
+				<td style="border-left : 1px solid #5D5D5D;border-right : 1px solid #5D5D5D;">영화 선택</td>
+			</tr>
+			<tr>
+				<td style="border-left : 1px solid #5D5D5D;border-right : 1px solid #5D5D5D;">
+	    			<div>
+					     <ul class="nav nav-pills nav-stacked"> 
+					    <%
+					     	for( CinemaBean cb : clist ){
+					    %>			
+					     		<li>
+					     			<a id="tm2" <% if(cb.getCname().equals(tcinema)){ %> style="background : #747474;" <%} %> href="home_ticket_cinema_movie.jsp?tcinema=<%= cb.getCname() %>"><%= cb.getCname() %></a>
+					     		</li>		
+					    <%	
+					     	}
+					     %> 
+					     </ul>
+		    		</div>
+	    		</td>
+				<td width="50%" style="border-left : 1px solid #5D5D5D;border-right : 1px solid #5D5D5D;">
+					 <div>
+					     <ul class="nav nav-pills nav-stacked"> 
+					    <%
+					     	for( MovieBean mb : mlist ){
+						     		if(mb.getMage() == 18){
+						    %>			
+						    		<li>
+					     				<a id="tm1" <% if(mb.getMname().equals(tmovie)){ %> style="background : #747474;" <%} %> href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_cinema_movie_time.jsp?tmovie=<%= mb.getMname() %>&tcinema=<%= tcinema %>">
+						     			<img src="<%= request.getContextPath() %>/images/18.jpg" width="15"> <%= mb.getMname() %>
+						   				</a>
+					     			</li>
+						    <%		
+						    		}
+						     		else if(mb.getMage() == 15){
+						    %>			
+						    		<li>
+					     				<a id="tm1" <% if(mb.getMname().equals(tmovie)){ %> style="background : #747474;" <%} %> href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_cinema_movie_time.jsp?tmovie=<%= mb.getMname() %>&tcinema=<%= tcinema %>">
+						      			<img src="<%= request.getContextPath() %>/images/15.jpg" width="13"> <%= mb.getMname() %>
+						   				</a>
+					     			</li>
+						   	<%
+						     		}
+						     		else if(mb.getMage() == 12){
+						   	%>
+						   			<li>
+					     				<a id="tm1" <% if(mb.getMname().equals(tmovie)){ %> style="background : #747474;" <%} %> href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_cinema_movie_time.jsp?tmovie=<%= mb.getMname() %>&tcinema=<%= tcinema %>">
+						     			<img src="<%= request.getContextPath() %>/images/12.jpg" width="13"> <%= mb.getMname() %>
+										</a>
+					     			</li>							
+							<%			
+						     		}
+						     		else{		
+							%>
+									<li>
+					     				<a id="tm1" <% if(mb.getMname().equals(tmovie)){ %> style="background : #747474;" <%} %> href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_cinema_movie_time.jsp?tmovie=<%= mb.getMname() %>&tcinema=<%= tcinema %>">
+										<img src="<%= request.getContextPath() %>/images/0.jpg" width="13"> <%= mb.getMname() %>
+						 				</a>
+					     			</li>
+						    <%	
+						     		}
+						     	}
+						     %> 
+					     				
+					     </ul>
+		    		</div>
+	    		</td>
+	    		<td style="border-left : 1px solid #5D5D5D;border-right : 1px solid #5D5D5D;">
+	    			<div>
+					     <ul class="nav nav-pills nav-stacked"> 
+					    <%
+					     	for( String time2 : time ){
+					    %>			
+					     		<li>
+					     			<a id="tm3" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_seat.jsp?tmovie=<%= tmovie %>&tcinema=<%= tcinema %>&time=<%= time2 %>"><%= time2 %></a>
+					     		</li>		
+					    <%	
+					     	}
+					     %> 
+					     </ul>
+		    		</div>
+	    		</td>
+			</tr>
+		</table>
+	<br>
+</td>
+<%@ include file="../home_bottom.jsp"%>
+

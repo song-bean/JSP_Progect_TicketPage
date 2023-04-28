@@ -1,0 +1,204 @@
+MY - Home - home.jsp에서 시작
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+-- 회원 테이블 (na_user)
+
+drop sequence user_seq ;
+
+create sequence user_seq 
+increment by 1
+start with 1
+minvalue 0
+maxvalue 10000
+nocache;
+
+drop table na_user cascade constraints purge;
+create table na_user(
+	uno number primary key,
+	uname varchar2(30) not null,
+	id varchar2(12) not null,
+	password varchar2(20) not null,
+	birth number,
+	gender varchar2(6) check(gender in('남자','여자')),
+	email varchar2(20),
+	hp1 number,
+	hp2 number,
+	hp3 number		
+);
+
+insert into na_user values(user_seq.nextval,'매니저','manager','qwerty123!',230404,'여자','manager@nanana.com', 010,1111,1111);
+
+commit;
+
+select * from na_user order by uno;
+
+--------------------------------------------------------------------------------------------------
+
+-- 영화 테이블(movie)
+
+drop sequence movie_seq;
+create sequence movie_seq 
+increment by 1
+start with 1
+minvalue 0
+maxvalue 10000
+nocache;
+
+drop table movie cascade constraints purge;
+create table movie(
+	mno number primary key,
+	mname varchar2(40) not null,
+	poster varchar2(40) not null,
+	genre varchar2(40),
+	running_time number,
+	mdate date,
+	mage number not null,
+	director varchar2(50),
+	actor varchar2(50),
+	country varchar2(30),
+	reser_rate number(3,1),
+	star_rate number(2,1)
+);
+ 
+insert into movie values(movie_seq.nextval,'더 퍼스트 슬램덩크', '더 퍼스트 슬램덩크.jpg','애니메이션', 124,'2023-01-04',12,'이노우에 다케히코','송태섭, 강백호','일본', 45.4, 4.6);
+
+commit;
+
+select * from movie order by mno;
+
+--------------------------------------------------------------------------------------------------
+
+-- 극장 테이블(cinema)
+
+drop sequence cinema_seq;
+create sequence cinema_seq 
+increment by 1
+start with 1
+minvalue 0
+maxvalue 10000
+nocache;
+
+drop table cinema cascade constraints purge;
+create table cinema(
+	cno number primary key,
+	cname varchar2(40) not null,
+	seat number not null,
+	address varchar2(200) not null,
+	tel1 number,
+	tel2 number	
+);
+
+insert into cinema values(cinema_seq.nextval,'미아',107,'서울특별시 강북구 도봉로 34', 1544,1122);
+
+commit;
+
+select * from cinema order by cno;
+
+--------------------------------------------------------------------------------------------------
+
+-- 예매 테이블(ticket)
+
+drop sequence ticket_seq;
+create sequence ticket_seq 
+increment by 1
+start with 1
+minvalue 0
+maxvalue 10000
+nocache;
+
+drop table ticket cascade constraints purge;
+create table ticket(
+	tno number primary key,
+	tmovie varchar2(40) not null,
+	tcinema varchar2(40) not null,
+	time varchar2(20) not null,
+	tid varchar2(12) not null,
+	seat_pos varchar2(40) not null,
+	seat_cap number not null,
+	adult number,
+	child number,
+	pay varchar2(30) not null
+);
+
+insert into ticket values(ticket_seq.nextval,'리바운드','미아','14:00 ~ 16:20','hong','k1 k2', 2,1,1,'card');
+
+commit;
+
+select  t.tno, t.tmovie, t.tcinema, t.time, t.tid, t.seat_pos, t.seat_cap, t.adult, t.child, t.pay,m.mno, m.poster, m.mage, u.uname, u.birth
+from (movie m inner join ticket t on m.mname = t.tmovie) inner join na_user u on t.tid = u.id
+order by tno;
+
+--------------------------------------------------------------------------------------------------
+
+-- 고객 문의 테이블(inquiry)
+
+drop sequence inquiry_seq;
+create sequence inquiry_seq 
+increment by 1
+start with 1
+minvalue 0
+maxvalue 10000
+nocache;
+
+drop table inquiry cascade constraints purge;
+create table inquiry(
+	ino number primary key,
+	iid varchar2(12) not null, 
+	subject varchar2(50) not null,
+	passwd number not null,
+	reg_date date not null,
+	readcount int default 0,
+	ref number not null,
+	re_step number not null,
+	re_level number not null,
+	content varchar2(1000) not null
+);
+
+insert into inquiry(ino,iid,subject,passwd,reg_date,ref,re_step,re_level,content)
+values(inquiry_seq.nextval,'hong','환불 문의','123456','2023-4-11',1,0,0,' 예매하고 취소한 지 3일이 지났는데 환불이 되지 않고 있습니다. 얼마나 걸릴까요?');
+
+insert into inquiry(ino,iid,subject,passwd,reg_date,ref,re_step,re_level,content)
+values(inquiry_seq.nextval,'manager','[답변]환불 문의','123456','2023-4-12',1,1,1,'현재 진행중에 있습니다.');
+
+insert into inquiry(ino,iid,subject,passwd,reg_date,ref,re_step,re_level,content)
+values(inquiry_seq.nextval,'hong','[답변][답변]환불 문의','123456','2023-4-15',1,2,2,'아직도 환불이 되지 않았습니다. 제가 언제까지 기다려야 하죠?');
+
+commit;
+
+select ino, iid, subject, passwd, reg_date, readcount, ref, re_step, re_level, content
+from (select rownum as rank, ino, iid, subject, passwd, reg_date, readcount, ref, re_step, re_level, content 
+from (select ino, iid, subject, passwd, reg_date, readcount, ref, re_step, re_level, content from inquiry order by ref desc, re_step asc))
+order by ino desc;
+
+--------------------------------------------------------------------------------------------------
+
+-- 스낵테이블(snack)
+
+drop sequence snack_seq;
+create sequence snack_seq 
+increment by 1
+start with 1
+minvalue 0
+maxvalue 10000
+nocache;
+
+drop table snack cascade constraints purge;
+create table snack(
+	sno number primary key,
+	sname varchar2(100) not null,
+	simage varchar2(200) not null,
+	sprice number not null,
+	scomp varchar2(200)
+);
+
+insert into snack values(snack_seq.nextval,'더블 콤보', '더블콤보.JPG',13000, '팝콘(M)2 + 탄산(M)2');
+
+commit;
+
+select * from snack order by sno;
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

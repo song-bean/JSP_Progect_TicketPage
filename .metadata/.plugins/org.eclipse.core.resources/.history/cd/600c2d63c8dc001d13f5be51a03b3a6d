@@ -1,0 +1,134 @@
+<%@page import="my.manager.movie.MovieBean"%>
+<%@page import="my.manager.movie.MovieDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<title>영화 상세 정보 페이지</title>
+
+<%
+	String mno = request.getParameter("mno");
+	MovieDao mdao = MovieDao.getInstance();
+	MovieBean mb =  mdao.getMovieByMno(mno); 
+%>
+
+<style type="text/css">
+	.mtable{
+		font-family: 'Nanum Pen Script', cursive;
+		font-size: 20px;
+	}
+	.mtable h2, .mtable h4{
+		font-family : 'Nanum Pen Script', cursive;
+	}
+</style>
+
+
+<%@ include file="home_top.jsp"%>
+<tr>
+		<td align="center" colspan="1" style="color : white">
+    		 <ul class="nav nav-pills nav-justified"> 
+		         <li class="dropdown">
+		         	  <a href="<%= request.getContextPath() %>/MY/Home/home_movie_list.jsp" id="m1" style="color : #FF7171;">영화</a>
+		         </li>
+		         
+		         <li class="dropdown">
+		         	  <a href="<%= request.getContextPath() %>/MY/Home/home_cinema_list.jsp" id="m1">극장</a>
+		         </li>
+		         
+		         <li class="dropdown">
+		         	 <%
+		         	if(sid == null){
+		         %>
+		         	  <a data-toggle="dropdown" href="" id="m1" onclick="ticket_idCheck()">예매
+		         	  	 <span class="caret"></span> 	 
+		         	  </a>
+		        <%
+		         	}
+		         	else if(sid.equals("manager")){
+		         %>
+		         	<a data-toggle="dropdown" href="" id="m1" onclick="id_managerCheck()">예매
+		         	  	 <span class="caret"></span> 	 
+		         	</a>
+		         <%		
+		         	}
+		         	else{
+		         %>	 	  	  
+		        	  <a data-toggle="dropdown" href="#" id="m1">예매
+		         	  	 <span class="caret"></span> 	 
+		         	  </a>
+		         	   <ul class="dropdown-menu" role="menu" id="mm1"> 
+			               <li><a role="menuitem" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_movie.jsp">영화별 예매</a></li>
+			               <li><a role="menuitem" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_cinema.jsp">극장별 예매</a></li>
+			               <li class="divider" style="border : 0.1px solid #4B4B4B;"></li>
+			               <li><a role="menuitem" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_list.jsp">예매 확인 </a></li>
+			          </ul>
+			     <%
+		         	}
+			     %>     
+		         </li>
+		          <li class="dropdown">
+		         	  <a class="f2" href="<%= request.getContextPath() %>/MY/Home/home_snack_list.jsp"id="m1">스낵</a>
+		         </li>
+		     </ul>
+		     <br>
+		</td>
+	</tr>
+	
+	<tr>
+<td colspan="5" align="center">
+	<br>
+		<table border="0" class="mtable" width="50%">
+			<tr>
+				<td height="300" width="200">
+				<%
+					if(mb.getPoster().equals("영화 포스터 없음")){
+				%>
+						<font size="50px" color="#F15F5F">포스터<br>준비중</font>
+						<br><br>
+				<%
+					}
+					else{
+				%>
+						<img src="<%= request.getContextPath() %>/poster/<%= mb.getPoster()%>" height="300" width="200">
+				<%
+					}
+				%>	
+				</td>
+				<td width="60%" valign="top">
+					<h2 style="color : #B2EBF4;">
+						<%
+							if(mb.getMage() == 18){
+					    %>			
+					     		<img src="<%= request.getContextPath() %>/images/18.jpg" width="20">
+					    <%		
+					    		}
+					     	else if(mb.getMage() == 15){
+					    %>			
+					      		<img src="<%= request.getContextPath() %>/images/15.jpg" width="20">
+					   	<%
+					     	}
+					     	else if(mb.getMage() == 12){
+					   	%>
+					     		<img src="<%= request.getContextPath() %>/images/12.jpg" width="20">
+						<%			
+					     	}
+					     	else{		
+						%>
+								<img src="<%= request.getContextPath() %>/images/0.jpg" width="20">
+					    <%	
+					     	}
+					     %> 
+						<%= mb.getMname() %>
+					</h2>
+					<h4>예매율 : <%= mb.getReser_rate() %></h4>
+					<hr>
+					<h4>감독 : <%= mb.getDirector() %> / 배우 : <%= mb.getActor() %> </h4>
+					<h4><%= mb.getRunning_time() %>분 / <%= mb.getGenre() %> / <%if(mb.getMage() != 0){%><%= mb.getMage() %>세 관람가<%}else{ %>전체관람가<% } %> / <%= mb.getCountry() %></h4>
+					<h4>개봉일 : <%= mb.getMdate() %></h4>
+					
+					<a class="delete" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_delete.jsp?tno=<%= tb.getTno() %>" onclick="return delete_check()">예매하기</a>
+				</td>
+			</tr>
+		</table>
+		<br>
+</td>
+<%@ include file="home_bottom.jsp"%>
+

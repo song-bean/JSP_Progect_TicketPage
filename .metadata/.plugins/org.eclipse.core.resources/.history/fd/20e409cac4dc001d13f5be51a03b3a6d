@@ -1,0 +1,202 @@
+/**
+ * script.js
+ */
+
+var birthisNan;
+var use;
+var isCheck = false;
+var pwuse;
+var pwsame;
+
+ function joinCheck(){
+	 if($('input[name=id]').val() == ""){
+		$("#idMessage").html('<font color="#CC3D3D">필수정보입니다.<font>').show();
+		$('input[name=id]').focus();
+		return false;
+	}
+	if(use == "missing"){
+		$("#idMessage").html('<font color="#CC3D3D">필수정보입니다.<font>').show();
+		$("input[name=id]").focus();
+		return false;
+	}
+	else if(use == "impossible"){
+		$("#idMessage").html('<font color="#CC3D3D">이미 등록된 아이디입니다.<font>').show();
+		$('input[name=id]').select();
+		return false;
+		
+	}else if(isCheck == false){
+		$("#idMessage").html('<font color="#47C83E">중복체크 먼저 하세요.<font>').show();
+		return false;
+	}
+	
+	if($('input[name=password]').val()==""){
+		$("#pwMessage").html('<font color="#CC3D3D">비밀번호를 입력하세요.<font>').show();
+		$('input[name=password]').focus();
+		return false;
+	}
+	
+	if(pwuse == "pwerror"){
+		$('input[name=password]').select();
+		$("#pwMessage").html('<font color="#CC3D3D">비밀번호를 형식이 틀렸습니다.<font>').show();
+		return false;
+	}
+	
+	if(pwsame == 'nosame'){
+		alert('비밀번호를 다시 확인해주세요.');
+		return false;	
+	}
+	
+	if($('input[name=birth]').val()==""){
+		$("#birthMessage").html('<font color="#CC3D3D">생년월일을 입력하세요.<font>').show();
+		$('input[name=birth]').focus();
+		return false;
+	}
+	if(birthisNan){
+		alert('생년월일을 다시 입력해주세요.');
+		$('input[name=birth]').select();
+		return false;	
+	}
+	
+	if($('input[name=email]').val()==""){
+		$("#emailMessage").html('<font color="#CC3D3D">이메일을 입력하세요.<font>').show();
+		$('input[name=email]').focus();
+		return false;
+	}
+	if($('input[name=email]').val().indexOf('@') < 0) {
+		$("#emailMessage").html('<font color="#CC3D3D">유효한 메일이 아닙니다.<font>').show();
+		$('input[name=email]').select();
+		return false;
+	}
+	
+	if($('input[name=hp1]').val()==""){
+		$("#hpMessage").html('<font color="#CC3D3D">전화번호를 입력하세요.<font>').show();
+		$('input[name=hp1]').focus();
+		return false;
+	}
+	if($('input[name=hp2]').val()==""){
+		$("#hpMessage").html('<font color="#CC3D3D">전화번호를 입력하세요.<font>').show();
+		$('input[name=hp2]').focus();
+		return false;
+	}
+	if($('input[name=hp3]').val()==""){
+		$("#hpMessage").html('<font color="#CC3D3D">전화번호를 입력하세요.<font>').show();
+		$('input[name=hp3]').focus();
+		return false;
+	}
+	if(isNaN($('input[name=hp1]').val())) {
+		$("#hpMessage").html('<font color="#CC3D3D">전화번호는 숫자로 입력하세요.<font>').show();
+		$('input[name=hp1]').select();
+		return false;
+	}
+	if(isNaN($('input[name=hp2]').val())) {
+		$("#hpMessage").html('<font color="#CC3D3D">전화번호는 숫자로 입력하세요.<font>').show();
+		$('input[name=hp2]').select();
+		return false;
+	}
+	if(isNaN($('input[name=hp3]').val())) {
+		$("#hpMessage").html('<font color="#CC3D3D">전화번호는 숫자로 입력하세요.<font>').show();
+		$('input[name=hp3]').select();
+		return false;
+	}
+	
+	if($('input[name=gender]:checked').size() == 0){
+		$("#genderMessage").html('<font color="#CC3D3D">성별을 선택하세요.<font>').show();
+		$('input[name=gender]').focus();
+		return false;
+	}
+	
+ }
+ 
+ function idkeyd(){
+	$('#idMessage').css('display','none');
+	use = "";
+	isCheck = false;
+ }
+ function pwkeyd(){
+	$('#pwMessage').css('display','none');
+ }
+ function emailkeyd(){
+	 $('#emailMessage').css('display','none');
+ }
+ function hpkeyd(){
+	 $('#hpMessage').css('display','none');
+ }
+ 
+ function birthkeyup(){
+	 
+	 if(isNaN($('input[name=birth]').val())) {
+		$("#birthMessage").html('<font color="#CC3D3D">생년월일은 숫자로 입력하세요.<font>').show();
+		birthisNan = true;
+	}
+	else{
+		$('#birthMessage').css('display','none');
+		birthisNan = false;
+	}
+	 
+ }
+ 
+ function pwcheck(){
+	
+	pw = $('input[name=password]').val();
+	
+	//var regexp =  /^[a-z0-9]{3,8}$/i; 
+	var regexp = /^[a-zA-Z0-9`~!@#$%^&*()-_=+]{8,16}$/;
+	if(!regexp.test(pw)){
+		$("#pwMessage").html('<font color="#CC3D3D">비밀번호를 형식이 틀렸습니다.<font>').show();
+		pwuse = "pwerror";
+	}
+	
+	var chk_num = pw.search(/[0-9]/);
+	var chk_eng = pw.search(/[a-z]/i);
+	var chk_spe = pw.search(/[\W]/);
+	
+	if(chk_num <0 || chk_eng < 0 || chk_spe < 0){
+		$("#pwMessage").html('<font color="#CC3D3D">비밀번호를 형식이 틀렸습니다.<font>').show();
+		pwuse = "pwerror";
+	}
+	else{
+		pwuse = "";
+	}
+	
+}
+
+function pw2check(){
+	
+	if($('input[name=password]').val() == $('input[name=password2]').val()){
+		$('#pwCheck').attr('class','');
+		$('#pw2Message').html('<font color="#6799FF">비밀번호 일치</font>');
+		pwsame = "same";
+	}
+	else{
+		$('#pwCheck').attr('class','form-group has-error');
+		$('#pw2Message').html('<font color="#CC3D3D">비밀번호 일치하지 않습니다.</font>');
+		pwsame = "nosame";
+	}
+}
+
+function duplicate(){ 
+		isCheck = true;
+    $.ajax({
+		url : "id_check_proc.jsp",
+		data : ({
+			userid : $('input[name=id]').val()
+		}),
+		success : function(data){
+			
+			if($('input[name=id]').val()==""){
+				$("#idMessage").html('<font color="#CC3D3D">아이디를 입력하세요<font>').show();
+				$('input[name=id]').focus();
+				use = "missing";
+			}
+			else if($.trim(data) == "NO"){
+				$("#idMessage").html('<font color="#CC3D3D">이미 등록된 아이디입니다<font>').show();
+				$('input[name=id]').select();
+				use = "impossible";
+			}
+			else if($.trim(data) == "YES"){
+				$("#idMessage").html('<font color="#6799FF">사용가능한 아이디입니다<font>').show();
+				use = "possible";
+			}
+		}
+	});//ajax
+}//duplicate

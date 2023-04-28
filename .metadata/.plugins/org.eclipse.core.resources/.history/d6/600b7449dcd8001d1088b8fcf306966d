@@ -1,0 +1,12 @@
+<%@page import="my.user.userBean"%>
+<%@page import="my.user.userDao"%>
+<%@page import="my.user.inquiry.inquiryBean"%>
+<%@page import="my.user.inquiry.inquiryDao"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<title>문의 삭제</title>
+<script type="text/javascript">
+	alert(**);	
+</script>

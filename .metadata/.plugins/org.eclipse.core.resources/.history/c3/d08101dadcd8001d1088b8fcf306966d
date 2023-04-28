@@ -1,0 +1,12 @@
+<%@page import="my.user.inquiry.inquiryDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<%
+	request.setCharacterEncoding("UTF-8");
+	String ino = request.getParameter("ino");
+	int pageNum = Integer.parseInt(request.getParameter("pageNum"));
+	
+	inquiryDao idao = inquiryDao.getInstance();
+	int cnt = idao.deleteInquiry(ino);
+%>    

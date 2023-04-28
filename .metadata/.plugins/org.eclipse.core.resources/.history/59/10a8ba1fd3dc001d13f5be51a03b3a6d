@@ -1,0 +1,164 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<title>회원가입 페이지</title>
+
+<style type="text/css">
+	#sub{
+		background-color: #353535;
+		color : #CC3D3D;
+	}
+	.tel{
+		/* border : 1px solid #353535; */
+		color : black;
+		border-radius: 5px;
+	}
+	div{
+		font-family: 'Gowun Dodum', sans-serif;
+		font-size: 15px;
+	}
+</style>
+
+<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/script.js"></script> 
+
+<%@ include file="home_top.jsp"%>
+<tr>
+		<td align="center" colspan="1" style="color : white">
+    		 <ul class="nav nav-pills nav-justified"> 
+		         <li class="dropdown">
+		         	  <a href="<%= request.getContextPath() %>/MY/Home/home_movie_list.jsp" id="m1">영화</a>
+		         </li>
+		         
+		         <li class="dropdown">
+		         	  <a href="<%= request.getContextPath() %>/MY/Home/home_cinema_list.jsp" id="m1">극장</a>
+		         </li>
+		         
+		         <li class="dropdown">
+		         	 <%
+		         	if(sid == null){
+		         %>
+		         	  <a data-toggle="dropdown" href="" id="m1" onclick="ticket_idCheck()">예매
+		         	  	 <span class="caret"></span> 	 
+		         	  </a>
+		        <%
+		         	}
+		         	else if(sid.equals("manager")){
+		         %>
+		         	<a data-toggle="dropdown" href="" id="m1" onclick="id_managerCheck()">예매
+		         	  	 <span class="caret"></span> 	 
+		         	</a>
+		         <%		
+		         	}
+		         	else{
+		         %>	 	  	  
+		        	  <a data-toggle="dropdown" href="#" id="m1">예매
+		         	  	 <span class="caret"></span> 	 
+		         	  </a>
+		         	   <ul class="dropdown-menu" role="menu" id="mm1"> 
+			               <li><a role="menuitem" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_movie.jsp">영화별 예매</a></li>
+			               <li><a role="menuitem" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_cinema.jsp">극장별 예매</a></li>
+			               <li class="divider" style="border : 0.1px solid #4B4B4B;"></li>
+			               <li><a role="menuitem" href="<%= request.getContextPath() %>/MY/Home/Ticket/home_ticket_list.jsp">예매 확인 </a></li>
+			          </ul>
+			     <%
+		         	}
+			     %>     
+		         </li>
+		          <li class="dropdown">
+		         	  <a class="f2" href="<%= request.getContextPath() %>/MY/Home/home_snack_list.jsp"id="m1">스낵</a>
+		         </li>
+		     </ul>
+		     <br>
+		</td>
+	</tr>
+	
+	<tr>
+		<td colspan="5" height="10">
+			<hr>
+		</td>
+	</tr>
+	
+	<tr>
+<td colspan="5" align="center">
+	<form name="joinform" action="<%= request.getContextPath() %>/MY/Home/JoinProc.jsp" method="post" onSubmit="return joinCheck()">
+		<table border="0" width="40%">
+			<tr>
+				<td align="left">
+					<h5>아이디</h5>
+						<input type="text" class="form-control" name="id" onkeydown="return idkeyd()">
+						<input type="button" id="idCheck" class="form-control" value="중복 체크" onClick=" return duplicate()">	
+					<div id="idMessage"></div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<h5>비밀번호</h5>
+					<input type="password" class="form-control" name="password" placeholder="8~16자 영문 대 소문자, 숫자, 특수문자 조합" onkeyup="return pwcheck()" onkeydown="return pwkeyd()">
+					<div id="pwMessage"></div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<div id="pwCheck">
+						<h5>비밀번호 확인</h5>
+						<input type="password" class="form-control" name="password2" onkeyup="pw2check()">
+						<div id="pw2Message"></div>
+					</div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<h5>이름</h5>
+					<input type="text" class="form-control" name="uname" required>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<h5>생년월일(6자리)</h5>
+					<input type="text" class="form-control" name="birth" placeholder="(예)230404" maxlength="6" onkeyup="return birthkeyup()">
+					<div id="birthMessage"></div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<h5>이메일</h5>
+					<input type="text" class="form-control" name="email" placeholder="honggildong@nanana.com" onkeydown="return emailkeyd()">
+					<div id="emailMessage"></div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td height="60">
+					<h5>전화번호</h5>
+					<input type="text" class="tel" name="hp1" size="4" maxlength="3" onkeydown="return hpkeyd()">-
+					<input type="text" class="tel" name="hp2" size="4" maxlength="4" onkeydown="return hpkeyd()">-
+					<input type="text" class="tel" name="hp3" size="4" maxlength="4" onkeydown="return hpkeyd()">
+					<div id="hpMessage"></div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+				<br>
+					남자 <input type="radio" value="남자" name="gender"> &nbsp;&nbsp;
+					여자 <input type="radio" value="여자" name="gender">
+					<div id="genderMessage"></div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+				<br>
+					<input type="submit" value="회원 가입" class="form-control" id="sub">
+				</td>
+			</tr>
+			
+		</table>
+	</form>
+</td>
+<%@ include file="home_bottom.jsp"%>

@@ -1,0 +1,82 @@
+<%@page import="java.text.DecimalFormat"%>
+<%@page import="my.manager.snack.SnackDao"%>
+<%@page import="my.manager.snack.SnackBean"%>
+<%@page import="java.util.ArrayList"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<title>스낵 목록 페이지</title>
+
+<%
+	SnackDao sdao = SnackDao.getInstance();
+	ArrayList<SnackBean> slist =  sdao.getAllSnack();
+	DecimalFormat df = new DecimalFormat("###,###");
+%>
+
+<style type="text/css">
+	.stable{
+		text-align: center;
+		font-family: 'Nanum Pen Script', cursive;
+		width : 95%;
+	}
+	.stable td{
+		border-bottom: 0.3px dotted white;
+	}
+	.stable td:firth-child{
+		border-top: 0.3px dotted white;
+	}
+	.stable td a{
+		color : #E4F7BA;
+	}
+	.stable td .update_a:hover{
+		color : #6799FF;
+	}
+	.stable td .delete_a:hover{
+		color : #CC3D3D;
+	}
+
+</style>
+
+<%@ include file="manager_top.jsp" %>
+	<td colspan="3">
+		<br>
+		<table class="stable">
+			<tr>
+				<td height="50">번호</td>
+				<td>스낵명</td>
+				<td>이미지명</td>
+				<td>가격</td>
+				<td>스낵 구성</td>
+				<td>수정</td>
+				<td>삭제</td>
+			</tr>
+	<%
+		if(slist.size() == 0){
+	%>
+			<tr>
+				<td colspan="7">등록된 스낵이 없습니다.</td>
+			</tr>
+	<%		
+		}
+		for(SnackBean sb : slist){
+	%>
+			<tr>
+				<td><%= sb.getSno() %></td>
+				<td><%= sb.getSname() %></td>
+				<td><%= sb.getSimage() %></td>
+				<td>
+					<img src="<%= request.getContextPath() %>/images/<%= sb.getSimage() %>">
+					<%= sb.getSimage() %>
+				</td>
+				<td><%= df.format(sb.getSprice()) %></td>
+				<td><%= sb.getScomp() %></td>				
+				<td><a class="update_a" href="snack_update.jsp?sno=<%= sb.getSno() %>">수정</a></td>
+				<td><a class="delete_a" href="snack_delete.jsp?sno=<%= sb.getSno() %>&simage=<%= sb.getSimage() %>">삭제</a></td>
+	<%	
+		}
+	%>
+			</tr>
+		</table>
+		<br>
+	</td>
+<%@ include file="manager_bottom.jsp" %>
